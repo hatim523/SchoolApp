@@ -1,0 +1,46 @@
+<script>
+
+let attendance_app = Vue.createApp({
+    data() {
+        return {
+            standard: "",
+            selected_date: "",
+
+            fetching_students: false,
+            records: [],
+        }
+    },
+    methods: {
+        get_attendance() {
+            let formData = new FormData();
+            formData.append("date", this.selected_date);
+            formData.append("standard", this.standard);
+
+            post_request(
+                "{% url 'teacher:get_attendance' %}",
+                formData,
+                (resp) => {this.records = resp['records'];},
+                (resp) => {warning_toast(resp['msg']);}
+            );
+        },
+        save_attendance() {
+            let formData = new FormData();
+            formData.append("date", this.selected_date);
+            formData.append("standard", this.standard);
+            formData.append("records", JSON.stringify(this.records));
+
+            post_request(
+                "{% url 'teacher:save_attendance' %}",
+                formData,
+                (resp) => {success_toast("Attendance saved!");},
+                (resp) => {warning_toast(resp['msg']);}
+            );
+        },
+    },
+    watch: {
+        selected_date(newVal, oldVal) {
+            this.get_attendance();
+        },
+    },
+}).mount("#attendance_modal");
+</script>

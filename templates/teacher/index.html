@@ -1,0 +1,46 @@
+{% extends "utils/base.html" %}
+
+{% block title %}
+    Teacher Dashboard
+{% endblock %}
+
+{% block navbar %}
+    {% include "teacher/navbar.html" %}
+{% endblock %}
+
+{% block content %}
+    {% for std in classes %}
+    <div class="row" style="padding: 1rem">
+        <div class="col">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ std.class_name }}</h5>
+                <p class="card-text">Subjects:
+                    {% for sub in std.subjects.all %}
+                      <span class="badge bg-info text-dark">{{ sub.name }}</span>
+                    {% endfor %}
+                    <br>Teachers: {{ std.teacher.count }}</p>
+
+                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#enroll_modal"
+                    onclick="enroll_app.standard_name = '{{ std.class_name }}'">Enroll Student</button>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#enrollments"
+                    onclick="enroll_app.standard_name = '{{ std.class_name }}'; enroll_app.get_enrolled_students()">View Enrolled Students</button>
+                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#attendance_modal"
+                    onclick="attendance_app.standard = '{{ std.class_name }}';">Mark/View Attendance</button>
+              </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div id="modals_div">
+        {% include "teacher/enroll_student.html" %}
+        {% include "teacher/view_enrolled_students.html" %}
+    </div>
+    {% include "teacher/attendance.html" %}
+{% endblock %}
+
+{% block custom_scripts %}
+    {% include "teacher/scripts/enroll_student.html" %}
+    {% include "teacher/scripts/attendance_app.html" %}
+{% endblock %}
