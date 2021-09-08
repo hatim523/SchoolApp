@@ -1,0 +1,65 @@
+<script>
+let enroll_app = Vue.createApp({
+    data() {
+        return {
+            students: [],
+            fetching_students: false,
+
+            selected_student: "-",
+            standard_name: "",
+
+            enrolled_students: [],
+        }
+    },
+    methods: {
+        get_not_enrolled_students() {
+            this.fetching_students = true;
+            get_request(
+                "{% url 'teacher:get_not_enrolled_students' %}",
+                null,
+                (resp) => {this.students = resp["student_list"]; this.fetching_students = false},
+                (resp) => {warning_toast(resp['msg']); this.fetching_students = false;}
+            )
+        },
+
+        enroll_student(elementRef) {
+            elementRef.srcElement.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Enrolling...`;
+            let formData = new FormData();
+            formData.append("standard", this.standard_name);
+            formData.append("student_id", this.selected_student);
+
+            post_request(
+                "{% url 'teacher:enroll_student' %}",
+                formData,
+                (resp) => {
+                    success_alert("Enrollment Successful",
+                        `Selected student was enrolled in class ${this.standard_name}.`);
+                    this.get_not_enrolled_students();
+                    elementRef.srcElement.innerHTML = "Enroll Student";
+                    this.selected_student = '-';
+                },
+                (resp) => {
+                    warning_toast(resp['msg']);
+                    elementRef.srcElement.innerHTML = "Enroll Student";
+                }
+            );
+        },
+
+        get_enrolled_students() {
+            this.enrolled_students = [];
+            let formData = new FormData();
+            formData.append("standard", this.standard_name);
+
+            post_request(
+                "{% url 'teacher:view_enrolled_students' %}",
+                formData,
+                (resp) => {this.enrolled_students = resp['enrolled_students'];},
+                (resp) => {warning_toast(resp['msg']);}
+            )
+        },
+
+    },
+}).mount("#modals_div");
+
+enroll_app.get_not_enrolled_students();
+</script>

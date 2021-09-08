@@ -1,0 +1,76 @@
+{% extends "utils/base.html" %}
+
+{% block title %}
+    Student Dashboard
+{% endblock %}
+
+{% block navbar %}
+    {% include "student/navbar.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="row" style="padding: 1rem">
+        <div class="col">
+            {% if standard %}
+                <div class="alert alert-info">
+                    <p>
+                        Class: {{ standard.class_name }}<br>
+                        Subjects: {% for sub in standard.subjects.all %}<span class="badge bg-info text-dark">{{ sub.name }}</span>&nbsp;&nbsp;{% endfor %}
+                    </p>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <p>
+                        Not enrolled in any class
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="view_attendance_div">
+        <div class="row">
+            <div class="col">
+                <label class="form-label" for="month_attendance">View Attendance for: </label>
+                <input type="month" class="form-control" id="month_attendance" v-model="selected_date">
+            </div>
+        </div>
+
+        <div class="row" v-show="fetching_data">
+            <div class="col">
+                <div class="alert alert-info">
+                    <i class="fa fa-spinner fa-spin"></i>&nbsp;Fetching data
+                </div>
+            </div>
+        </div>
+
+        <div class="row" v-show="!fetching_data && selected_date !== ''">
+            <div class="col">
+                <table class="table table-hover">
+                    <thead>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </thead>
+                    <tbody>
+                        <tr v-for="record in records">
+                            <td>
+                                {% templatetag openvariable %}
+                                     record.date
+                                {% templatetag closevariable %}
+                            </td>
+                            <td>
+                                {% templatetag openvariable %}
+                                    record.status
+                                {% templatetag closevariable %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_scripts %}
+    {% include "student/scripts/view_attendance_app.html" %}
+{% endblock %}

@@ -1,0 +1,48 @@
+<div class="modal fade" id="enrollments" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Enrolled Student</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-info" v-if="enrolled_students.length < 1">
+                    No enrolled students.
+                </div>
+                <table class="table table-hover" v-if="enrolled_students.length > 0">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Enrolled On</th>
+                            <th>Added by</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="enrollment in enrolled_students">
+                            <td>{% templatetag openvariable %}
+                                    enrollment.name
+                                {% templatetag closevariable %}
+                            </td>
+                            <td>{% templatetag openvariable %}
+                                    enrollment.enrollment_date
+                                {% templatetag closevariable %}
+                            </td>
+                            <td>{% templatetag openvariable %}
+                                    enrollment.enrolled_by
+                                {% templatetag closevariable %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

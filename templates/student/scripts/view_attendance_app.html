@@ -1,0 +1,33 @@
+<script>
+
+let view_attendance_app = Vue.createApp({
+    data() {
+        return {
+            standard: {% if standard %}"{{ standard.class_name }}"{% else %}""{% endif %},
+            selected_date: "",
+            fetching_data: false,
+            records: [],
+        }
+    },
+    methods: {
+        get_records() {
+            this.fetching_data = true;
+            let formData = new FormData();
+            formData.append("standard", this.standard);
+            formData.append("date", this.selected_date);
+
+            post_request(
+                "{% url 'student:view_attendance' %}",
+                formData,
+                (resp) => {this.fetching_data = false; this.records = resp['records'];},
+                (resp) => {this.fetching_data = false; warning_toast(resp['msg']);}
+            )
+        },
+    },
+    watch: {
+        selected_date(newVal, oldVal) {
+            this.get_records();
+        }
+    }
+}).mount("#view_attendance_div");
+</script>
